@@ -1,0 +1,43 @@
+{
+    "name": "merrysean/migrationgenerator",
+    "description": ":description",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Grover Sean Reyes",
+            "email": "Zilex.Seryth@gmail.com",
+            "homepage": "copypaste.ph"
+        }
+    ],
+    "homepage": "https://github.com/merrysean/migrationgenerator",
+    "keywords": ["Laravel", "migrationgenerator"],
+    "require": {
+        "illuminate/support": "~5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~7.0",
+        "mockery/mockery": "^1.1",
+        "orchestra/testbench": "~3.0",
+        "sempro/phpunit-pretty-print": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "MerrySean\\migrationgenerator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MerrySean\\migrationgenerator\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MerrySean\\migrationgenerator\\migrationgeneratorServiceProvider"
+            ],
+            "aliases": {
+                "migrationgenerator": "MerrySean\\migrationgenerator\\Facades\\migrationgenerator"
+            }
+        }
+    }
+}
