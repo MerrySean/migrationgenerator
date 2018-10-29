@@ -1,6 +1,6 @@
 {
     "name": "merrysean/migrationgenerator",
-    "description": ":description",
+    "description": "Generates migration files from old databases",
     "license": "MIT",
     "authors": [{
         "name": "Grover Sean Reyes",
