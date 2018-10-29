@@ -4,6 +4,7 @@ namespace MerrySean\migrationgenerator;
 
 use Illuminate\Console\Command;
 use DB;
+use Artisan;
 
 class migrationgenerator extends Command
 {
@@ -51,21 +52,16 @@ class migrationgenerator extends Command
         $tables = DB::select(DB::raw('show Tables'));
         foreach ($tables as $key => $table) {
             $TableName = $table->Tables_in_dirigentloftet;
-            echo "Creating Migration File for ". $TableName."\n";
             // get all column of table
             $columns = DB::select(DB::raw('SHOW COLUMNS FROM '.$TableName));
             // Check if migration File already Exist
-            if($this->MigrationExist('users')){
+            if($this->MigrationExist($TableName)){
                 // handle exisiting Migration File
-            };
-            foreach ($columns as $key => $column) {
-                // echo    $column->Field." ".
-                //         $column->Type." ".
-                //         $column->Null." ".
-                //         $column->Key." ".
-                //         $column->Default." ".
-                //         $column->Extra."\n";
+                echo "Editing Migration File for ". $TableName."\n";
+            }else{
+                $this->create_migration($TableName, $columns);
             }
+            
         }
     }
 
@@ -101,5 +97,21 @@ class migrationgenerator extends Command
         foreach($files as $k => $v){
             unlink('./database/'.$folder.'/'.$v) or die("Couldn't delete file");
         }
+    }
+
+    private function create_migration($table, $columns){
+            echo "Creating Migration File for ". $table."\n";
+            $this->call('make:migration', [
+                'name' => $table,
+                '--path' => 'database/Sample'
+            ]);
+            foreach ($columns as $key => $column) {
+                // echo    $column->Field." ".
+                //         $column->Type." ".
+                //         $column->Null." ".
+                //         $column->Key." ".
+                //         $column->Default." ".
+                //         $column->Extra."\n";
+            }
     }
 }
