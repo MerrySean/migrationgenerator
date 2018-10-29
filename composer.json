@@ -2,13 +2,11 @@
     "name": "merrysean/migrationgenerator",
     "description": ":description",
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Grover Sean Reyes",
-            "email": "Zilex.Seryth@gmail.com",
-            "homepage": "copypaste.ph"
-        }
-    ],
+    "authors": [{
+        "name": "Grover Sean Reyes",
+        "email": "Zilex.Seryth@gmail.com",
+        "homepage": "https://copypaste.ph"
+    }],
     "homepage": "https://github.com/merrysean/migrationgenerator",
     "keywords": ["Laravel", "migrationgenerator"],
     "require": {
