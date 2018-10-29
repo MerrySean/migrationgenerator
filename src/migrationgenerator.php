@@ -45,9 +45,13 @@ class migrationgenerator extends Command
      */
     public function handle()
     {
+        if($this->confirm('Do you want to back-up old Migration Files?')){
+            $this->backUp('migrations');
+        }
+
         //Delete all files under Sample folder
         echo "Deleting Files on Sample\n";
-        $this->ClearFolder('Sample');
+        $this->ClearFolder('migrations');
         //Get all table in databse
         $tables = DB::select(DB::raw('show Tables'));
         foreach ($tables as $key => $table) {
@@ -101,17 +105,70 @@ class migrationgenerator extends Command
 
     private function create_migration($table, $columns){
             echo "Creating Migration File for ". $table."\n";
-            $this->call('make:migration', [
-                'name' => $table,
-                '--path' => 'database/Sample'
+            $artisan = $this->call('make:migration:schema', [
+                'name' => "create_".$table."_table",
+                '--schema' => $this->CreateSchema($columns)
             ]);
-            foreach ($columns as $key => $column) {
-                // echo    $column->Field." ".
-                //         $column->Type." ".
-                //         $column->Null." ".
-                //         $column->Key." ".
-                //         $column->Default." ".
-                //         $column->Extra."\n";
+    }
+
+    private function CreateSchema($columns){
+        $schema = "";
+        foreach ($columns as $key => $column) {
+            if($column->Key !== "PRI" && !$this->isTimestamp($column->Type)){
+                $schema .= $column->Field.":".$this->parseType($column->Type);
+                if($column->Null === "YES"){
+                    $schema .= ':nullable';    
+                }
+                if($column->Default){
+                    $schema .= ":default($column->Default)";
+                }
+                $schema .= ',';
             }
+        }
+        $s = explode(',', $schema);
+        array_pop($s);
+        $schema = implode(',', $s);
+        return $schema."\n";
+    }
+
+    private function parseType($ColType){
+        $types = [
+            'int' => 'integer',
+            'varchar' => 'varchar',
+            'text' => 'text',
+        ];
+        foreach ($types as $type => $parse){
+            if( strpos($ColType, $type) !== false ){
+                if($type == "int"){
+                    if( strpos($ColType, 'unsigned') !== false ){
+                        return 'unsignedInteger';
+                    }
+                }
+                return $parse;
+            }
+        }
+    }
+
+    private function isTimestamp($ColType){
+        if($ColType === "timestamp"){
+            return true;
+        }
+        return false;
+    }
+
+    private function backUp($folder){
+        // Get all migrations files
+        $files = array_diff(scandir('./database/'.$folder), array('.', '..'));
+
+        $path = './database/backup/'.time().'/';
+
+        if (!file_exists($path)) {
+            mkdir($path, 0777, true);
+        }
+        // Loop all migration files
+        foreach($files as $k => $v){
+            $filename = './database/'.$folder.'/'.$v;
+            rename($filename , $path.$v) or die("Couldn't copy file");
+        }
     }
 }
